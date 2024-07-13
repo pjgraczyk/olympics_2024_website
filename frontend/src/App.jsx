@@ -1,18 +1,14 @@
-import './App.css'
-import NavBar from './components/NavBar'
-import MainContent from './components/MainContent'
-import Footer from './components/Footer'
+import React from "react";
+import Sidebar from "./components/Sidebar";
+import MainContent from "./components/MainContent";
 
-function App() {
+const App = () => {
   return (
-    <>
-      <div>
-        <NavBar />
-        <MainContent />
-        <Footer />
-      </div>
-    </>
-  )
-}
+  <div className="flex h-screen w-screen">
+    <Sidebar />
+    <MainContent />
+  </div>
+  );
+};
 
 export default App;

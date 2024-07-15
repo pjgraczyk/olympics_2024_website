@@ -9,8 +9,10 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { Select } from "./ui/Select";
-import { Button } from "./ui/Button";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 
 const MedalCountGraph = () => {
   const [sports, setSports] = useState([]);
@@ -20,7 +22,7 @@ const MedalCountGraph = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/sports_by_season")
+    fetch("http://localhost:8000/sports/sports_by_season")
       .then((response) => response.json())
       .then((data) => {
         const allSports = [...data.Summer, ...data.Winter].sort();
@@ -45,40 +47,79 @@ const MedalCountGraph = () => {
   };
 
   return (
-      <div className="w-full">
-        <h2 className="text-center">Medal Count by Country</h2>
-        <div className="text-xl font-bold p-5"> Select sport:</div>
-        <div className="text-black p-5">
+    <Card className="w-full shadow-lg">
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold">Medal Count by Country</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 mb-6">
           <Select
             value={selectedSport}
-            onChange={(e) => setSelectedSport(e.target.value)}
+            onValueChange={setSelectedSport}
+            className="w-full md:w-64"
           >
             {sports.map((sport) => (
-              <option key={sport} value={sport}>
+              <Select.Option key={sport} value={sport}>
                 {sport}
-              </option>
+              </Select.Option>
             ))}
           </Select>
-          <Button onClick={fetchMedalData} disabled={loading}>
-            {loading ? "Loading..." : "Fetch Data"}
+          <Button
+            onClick={fetchMedalData}
+            disabled={loading}
+            className="w-full md:w-auto"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Loading
+              </>
+            ) : (
+              "Fetch Data"
+            )}
           </Button>
         </div>
-      {error && <div>{error}</div>}
-      <div className="w-auto h-96 p-10">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={medalData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="country" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="gold" name="Gold" fill="#FFD700" />
-            <Bar dataKey="silver" name="Silver" fill="#C0C0C0" />
-            <Bar dataKey="bronze" name="Bronze" fill="#CD7F32" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
+
+        {error && (
+          <div className="text-red-500 mb-4 p-2 bg-red-100 rounded">
+            Error: {error}
+          </div>
+        )}
+
+        <div className="w-full h-96 bg-white rounded-lg overflow-hidden">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={medalData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+              <XAxis
+                dataKey="country"
+                tick={{ fill: '#333', fontSize: 12 }}
+                tickLine={{ stroke: '#333' }}
+              />
+              <YAxis
+                tick={{ fill: '#333', fontSize: 12 }}
+                tickLine={{ stroke: '#333' }}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  border: 'none',
+                  borderRadius: '4px',
+                  boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
+                }}
+              />
+              <Legend
+                wrapperStyle={{
+                  paddingTop: '20px'
+                }}
+              />
+              <Bar dataKey="gold" name="Gold" fill="#FFD700" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="silver" name="Silver" fill="#C0C0C0" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="bronze" name="Bronze" fill="#CD7F32" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

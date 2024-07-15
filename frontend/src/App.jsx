@@ -1,14 +1,6 @@
-import React from "react";
-import Sidebar from "./components/Sidebar";
-import MainContent from "./components/MainContent";
+import { RouterProvider } from 'react-router-dom';
+import router from './routes';
 
-const App = () => {
-  return (
-  <div className="flex h-screen w-screen">
-    <Sidebar />
-    <MainContent />
-  </div>
-  );
-};
-
-export default App;
+export default function App() {
+  return <RouterProvider router={router} />;
+}
